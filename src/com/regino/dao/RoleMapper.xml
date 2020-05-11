@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.regino.dao.RoleMapper">
+    <!--
+    多对多 2
+    -->
+    <resultMap id="roleWithUserMap" type="Role">
+        <id column="id" property="id"></id>
+        <result column="role_name" property="roleName"></result>
+        <result column="role_desc" property="roleDesc"></result>
+
+        <!--
+            多对多实现步骤和一对多是一样的（区别在于sql语句）
+        -->
+        <collection property="userList" ofType="com.regino.domain.User">
+            <id column="uid" property="id"></id>
+            <result column="username" property="username"></result>
+            <result column="birthday" property="birthday"></result>
+            <result column="sex" property="sex"></result>
+            <result column="address" property="address"></result>
+        </collection>
+    </resultMap>
+
+    <!--
+        多对多关联
+    -->
+    <select id="findByIdWithUsers" parameterType="int" resultMap="roleWithUserMap">
+        SELECT * FROM `role` r
+            INNER JOIN user_role ur ON r.`id` = ur.`rid`  -- 角色连接中间表
+            INNER JOIN USER u ON ur.`uid` = u.`id`  -- 再根据中间表连接用户
+            WHERE r.id = #{id} -- 角色id 作为条件
+    </select>
+</mapper>

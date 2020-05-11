@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.regino.dao.OrderMapper">
+
+
+    <resultMap id="orderMap" type="Order">
+        <id column="id" property="id"></id>
+        <result column="ordertime" property="ordertime"></result>
+        <result column="money" property="money"></result>
+        <!--
+            一对一多表关联 association标签
+                 property="user" 关联实体的属性名
+                 javaType="com.regino.domain.User" 关联实体java类型
+        -->
+        <association property="user" javaType="User">
+            <id column="uid" property="id"></id>
+            <result column="username" property="username"></result>
+            <result column="birthday" property="birthday"></result>
+            <result column="sex" property="sex"></result>
+            <result column="address" property="address"></result>
+        </association>
+    </resultMap>
+
+    <!--
+        一对一关联查询
+            resultType：单表映射封装
+            resultMap：多表查询必须手动映射封装
+    -->
+    <select id="findByIdWithUser" parameterType="int" resultMap="orderMap">
+        SELECT * FROM orders o INNER JOIN `user` u ON o.`uid` = u.`id` WHERE o.`id` = #{id}
+    </select>
+
+
+</mapper>
